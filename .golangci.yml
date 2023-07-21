@@ -1,0 +1,50 @@
+run:
+  deadline: 5m
+
+linters:
+  enable-all: true
+  disable:
+    - cyclop # checks function and package cyclomatic complexity
+    - exhaustive # check exhaustiveness of enum switch statements
+    - exhaustivestruct # Checks if all struct's fields are initialized
+    - exhaustruct # finds structures with uninitialized fields
+    - forbidigo # Forbids identifiers
+    - gci # control golang package import order and make it always deterministic
+    - gochecknoglobals # check that no global variables exist
+    - gochecknoinits # Checks that no init functions are present in Go code
+    - godox # Tool for detection of FIXME, TODO and other comment keywords
+    - gofumpt # checks whether code was gofumpt-ed
+    - golint # deprecated and replaced by revive
+    - gomnd # An analyzer to detect magic numbers
+    - gomoddirectives # Manage the use of 'replace', 'retract', and 'excludes' directives in go.mod
+    - gosec # Inspects source code for security problems
+    - ifshort # Checks that your code uses short syntax for if-statements whenever possible
+    - ireturn # Accept Interfaces, Return Concrete Types
+    - interfacer # suggests narrower interface types
+    - lll # Reports long lines
+    - nlreturn # checks for a new line before return and branch statements to increase code clarity
+    - paralleltest # detects missing usage of t.Parallel() method in your Go test
+    - scopelint # deprecated and replaced by exportloopref
+    - tagliatelle # checks the struct tags
+    - testpackage # linter that makes you use a separate _test package
+    - varnamelen # checks that the length of a variable's name matches its scope
+    - wrapcheck # Checks that errors returned from external packages are wrapped
+    - wsl # Whitespace Linter - Forces you to use empty lines
+
+    - bodyclose # TODO checks whether HTTP response body is closed successfully
+    - dupl # TODO Tool for code clone detection
+    - forcetypeassert # TODO finds forced type assertions
+    - funlen # TODO Tool for detection of long functions
+    - godot # TODO Comment should end in a period
+    - maligned # TODO Tool to detect Go structs that would take less memory if their fields were sorted
+    - noctx # TODO noctx finds sending http request without context.Context
+    - revive # TODO Fast, configurable, extensible, flexible, and beautiful linter
+    - staticcheck # TODO go vet on steroids, applying a ton of static analysis checks
+    - stylecheck # TODO Stylecheck is a replacement for golint
+    - whitespace # TODO Tool for detection of leading and trailing whitespace
+
+issues:
+  exclude-rules:
+    - linters:
+        - goerr113
+      text: "do not define dynamic errors"
