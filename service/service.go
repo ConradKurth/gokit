@@ -61,6 +61,7 @@ type CronRegister interface {
 
 type RouteRegistration interface {
 	RegisterRoutes(router chi.Router, middlewares ...func(http.Handler) http.Handler)
+	RegisterPublicRoutes(router chi.Router, middlewares ...func(http.Handler) http.Handler)
 }
 type WorkerRegistration interface {
 	RegisterWithWorker(worker worker.Worker)
@@ -179,10 +180,12 @@ func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 	router.Use(middleware.Heartbeat("/healthz"))
 	router.Use(ssl.NewMiddleware(config.IsDevelopment()))
 
+	fmt.Println("cors hosts", cfg.GetStringSlice("cors.hosts"))
 	cors := cors.New(cors.Options{
-		AllowedOrigins:   cfg.GetStringSlice("cors.hosts"),
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "sentry-trace", "X-CSRF-Token", "X-Region", "X-Currency"},
+		AllowedOrigins: cfg.GetStringSlice("cors.hosts"),
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		// AllowedHeaders:   []string{"Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "sentry-trace", "X-CSRF-Token"},
+		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
 		MaxAge:           300,
 	})
@@ -210,6 +213,13 @@ func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 func (svc *Service) RegisterRoutes(routers []RouteRegistration, middlewares ...func(http.Handler) http.Handler) {
 	for _, route := range routers {
 		route.RegisterRoutes(svc.router, middlewares...)
+	}
+}
+
+// RegisterPublicRoutes registers http routes with the webserver router.
+func (svc *Service) RegisterPublicRoutes(routers []RouteRegistration, middlewares ...func(http.Handler) http.Handler) {
+	for _, route := range routers {
+		route.RegisterPublicRoutes(svc.router, middlewares...)
 	}
 }
 

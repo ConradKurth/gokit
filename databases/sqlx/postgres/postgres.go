@@ -83,7 +83,7 @@ func InitDB(c *config.Config, opts ...func(*options)) *sqlx.DB {
 			c.GetString(fmt.Sprintf("%v.port", d.name)),
 			c.GetString(fmt.Sprintf("%v.dbname", d.name)),
 		)
-		fmt.Println(u)
+
 		mode := c.GetString(fmt.Sprintf("%v.sslmode", d.name))
 		if mode != "" {
 			u = fmt.Sprintf("%v?sslmode=%v", u, mode)

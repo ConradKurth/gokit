@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/ConradKurth/gokit/config"
-	"github.com/ConradKurth/gokit/databases/postgres"
+	"github.com/ConradKurth/gokit/databases/sqlx/postgres"
 	"github.com/DATA-DOG/go-txdb"
 	"github.com/jmoiron/sqlx"
 	"github.com/romanyx/polluter"
