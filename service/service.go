@@ -180,7 +180,6 @@ func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 	router.Use(middleware.Heartbeat("/healthz"))
 	router.Use(ssl.NewMiddleware(config.IsDevelopment()))
 
-	fmt.Println("cors hosts", cfg.GetStringSlice("cors.hosts"))
 	cors := cors.New(cors.Options{
 		AllowedOrigins: cfg.GetStringSlice("cors.hosts"),
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
