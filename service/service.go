@@ -53,9 +53,6 @@ type Service struct {
 	router     chi.Router
 	webserver  *http.Server
 	grpcServer *grpc.Server
-
-	publicCors  func(next http.Handler) http.Handler
-	privateCors func(next http.Handler) http.Handler
 }
 
 type CronRegister interface {
@@ -183,30 +180,16 @@ func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 	router.Use(middleware.Heartbeat("/healthz"))
 	router.Use(ssl.NewMiddleware(config.IsDevelopment()))
 
-	if cfg.GetBoolDefault("cors.public.enabled", false) {
-		cors := cors.New(cors.Options{
-			AllowedOrigins: cfg.GetStringSlice("cors.public.hosts"),
-			AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-			// AllowedHeaders:   []string{"Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "sentry-trace", "X-CSRF-Token"},
-			AllowedHeaders:   []string{"*"},
-			AllowCredentials: true,
-			MaxAge:           300,
-		})
-		svc.publicCors = cors.Handler
-	}
+	cors := cors.New(cors.Options{
+		AllowedOrigins: cfg.GetStringSlice("cors.hosts"),
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		// AllowedHeaders:   []string{"Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "sentry-trace", "X-CSRF-Token"},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	})
 
-	if cfg.GetBoolDefault("cors.private.enabled", false) {
-		cors := cors.New(cors.Options{
-			AllowedOrigins: cfg.GetStringSlice("cors.private.hosts"),
-			AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-			// AllowedHeaders:   []string{"Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "sentry-trace", "X-CSRF-Token"},
-			AllowedHeaders:   []string{"*"},
-			AllowCredentials: true,
-			MaxAge:           300,
-		})
-		svc.privateCors = cors.Handler
-	}
-
+	router.Use(cors.Handler)
 	// sample anything below
 	router.Use(otelchi.Middleware(svc.serviceName))
 	router.Use(middleware.RealIP)
@@ -228,10 +211,6 @@ func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 // RegisterRoutes registers http routes with the webserver router.
 func (svc *Service) RegisterRoutes(routers []RouteRegistration, middlewares ...func(http.Handler) http.Handler) {
 
-	if svc.privateCors != nil {
-		middlewares = append(middlewares, svc.privateCors)
-	}
-
 	for _, route := range routers {
 		route.RegisterRoutes(svc.router, middlewares...)
 	}
@@ -239,9 +218,6 @@ func (svc *Service) RegisterRoutes(routers []RouteRegistration, middlewares ...f
 
 // RegisterPublicRoutes registers http routes with the webserver router.
 func (svc *Service) RegisterPublicRoutes(routers []RouteRegistration, middlewares ...func(http.Handler) http.Handler) {
-	if svc.publicCors != nil {
-		middlewares = append(middlewares, svc.publicCors)
-	}
 
 	for _, route := range routers {
 		route.RegisterPublicRoutes(svc.router, middlewares...)
