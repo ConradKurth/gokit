@@ -185,7 +185,7 @@ func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 
 	if cfg.GetBoolDefault("cors.public.enabled", false) {
 		cors := cors.New(cors.Options{
-			AllowedOrigins: cfg.GetStringSlice("cors.hosts"),
+			AllowedOrigins: cfg.GetStringSlice("cors.public.hosts"),
 			AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 			// AllowedHeaders:   []string{"Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "sentry-trace", "X-CSRF-Token"},
 			AllowedHeaders:   []string{"*"},
@@ -197,7 +197,7 @@ func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 
 	if cfg.GetBoolDefault("cors.private.enabled", false) {
 		cors := cors.New(cors.Options{
-			AllowedOrigins: cfg.GetStringSlice("cors.hosts"),
+			AllowedOrigins: cfg.GetStringSlice("cors.private.hosts"),
 			AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 			// AllowedHeaders:   []string{"Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "sentry-trace", "X-CSRF-Token"},
 			AllowedHeaders:   []string{"*"},
