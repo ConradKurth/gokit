@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/ConradKurth/gokit/config"
+	"github.com/getsentry/sentry-go"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 	"go.uber.org/zap"
@@ -261,8 +263,25 @@ func (l *logger) DebugCtx(ctx context.Context, msg string, fields ...Field) {
 }
 
 func (l *logger) ErrorCtx(ctx context.Context, msg string, fields ...Field) {
+	sentryItems := map[string]interface{}{
+		"message": msg,
+	}
+	err := errors.New(msg)
+	for _, f := range fields {
+		if e, ok := f.Value().(error); ok {
+			err = e
+		} else {
+			sentryItems[f.Key()] = f.Value()
+		}
+	}
+
+	sentry.WithScope(func(scope *sentry.Scope) {
+		scope.SetContexts(map[string]sentry.Context{"fields": sentryItems})
+		sentry.CaptureException(err)
+	})
+
 	f := l.getFields(ctx, fields...)
-	l.logger.ErrorContext(ctx, msg, f...)
+	l.logger.Error(msg, f...)
 }
 
 func (l *logger) WarnCtx(ctx context.Context, msg string, fields ...Field) {
