@@ -276,7 +276,7 @@ func (l *logger) ErrorCtx(ctx context.Context, msg string, fields ...Field) {
 	}
 
 	sentry.WithScope(func(scope *sentry.Scope) {
-		scope.SetContexts(map[string]sentry.Context{"fields": sentryItems})
+		scope.SetContext("fields", sentryItems)
 		sentry.CaptureException(err)
 	})
 
