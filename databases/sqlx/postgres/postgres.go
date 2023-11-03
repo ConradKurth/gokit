@@ -21,6 +21,7 @@ type options struct {
 	migrationDir        string
 	driveName           string
 	url                 string
+	trace               pgx.QueryTracer
 }
 
 func WithMigrationDir(d string) func(*options) {
@@ -59,9 +60,14 @@ func WitURL(u string) func(*options) {
 	}
 }
 
+func WithTracer(t pgx.QueryTracer) func(*options) {
+	return func(o *options) {
+		o.trace = t
+	}
+}
+
 // ONLY CALL THIS ONCE FOR EACH DB TYPE
 func InitDB(c *config.Config, opts ...func(*options)) *sqlx.DB {
-
 	d := &options{
 		driveName: "pgx",
 	}
@@ -92,6 +98,9 @@ func InitDB(c *config.Config, opts ...func(*options)) *sqlx.DB {
 		config, err := pgx.ParseConfig(u)
 		if err != nil {
 			panic(err)
+		}
+		if d.trace != nil {
+			config.Tracer = d.trace
 		}
 		// THIS ASSUMES THE SSL Cert is in the right location
 		if mode == "verify-ca" {
