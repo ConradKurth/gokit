@@ -1,9 +1,11 @@
 package service
 
 type options struct {
-	temporalService bool
-	httpService     bool
-	grpcService     bool
+	temporalService   bool
+	httpService       bool
+	grpcService       bool
+	traceSampleRate   float64
+	profileSameplRate float64
 }
 
 // WithGRPCService will enable to service to run with a temporal worker
@@ -24,5 +26,17 @@ func WithTemporalService() func(*options) {
 func WithHTTPService() func(*options) {
 	return func(o *options) {
 		o.httpService = true
+	}
+}
+
+func WithTraceSampleRate(r float64) func(*options) {
+	return func(o *options) {
+		o.traceSampleRate = r
+	}
+}
+
+func WithProfileSampleRate(r float64) func(*options) {
+	return func(o *options) {
+		o.profileSameplRate = r
 	}
 }

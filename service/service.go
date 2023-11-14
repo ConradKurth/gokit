@@ -88,11 +88,12 @@ func New(ctx context.Context, configPath, sentryDSN string, opts ...func(*option
 	}
 
 	if err = sentry.Init(sentry.ClientOptions{
-		Dsn:              sentryDSN,
-		ServerName:       svc.serviceName,
-		Environment:      config.GetEnvironment().String(),
-		AttachStacktrace: true,
-		TracesSampleRate: 0,
+		Dsn:                sentryDSN,
+		ServerName:         svc.serviceName,
+		Environment:        config.GetEnvironment().String(),
+		AttachStacktrace:   true,
+		TracesSampleRate:   opt.traceSampleRate,
+		ProfilesSampleRate: opt.profileSameplRate,
 	}); err != nil {
 		return nil, fmt.Errorf("initializing sentry: %w", err)
 	}
