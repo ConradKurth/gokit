@@ -27,7 +27,6 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/riandyrn/otelchi"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
-	"go.opentelemetry.io/otel/sdk/trace"
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
 	"google.golang.org/grpc"
@@ -45,7 +44,7 @@ type Service struct {
 	serviceName string
 	logger      logger.Logger
 
-	tracer *trace.TracerProvider
+	// tracer *trace.TracerProvider
 
 	temporalWorker worker.Worker
 	temporalClient client.Client
@@ -99,10 +98,10 @@ func New(ctx context.Context, configPath, sentryDSN string, opts ...func(*option
 		return nil, fmt.Errorf("initializing sentry: %w", err)
 	}
 
-	svc.tracer, err = instrument.GetTracingProvider(ctx, cfg, svc.serviceName)
-	if err != nil {
-		return nil, fmt.Errorf("initializing tracer: %w", err)
-	}
+	// svc.tracer, err = instrument.GetTracingProvider(ctx, cfg, svc.serviceName)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("initializing tracer: %w", err)
+	// }
 
 	if opt.temporalService {
 		svc.temporalClient, err = instrument.NewTemporalClient(ctx, svc.logger, cfg, svc.serviceName)
@@ -299,11 +298,11 @@ func (svc *Service) Shutdown(ctx context.Context) error {
 		svc.grpcServer.GracefulStop()
 	}
 
-	if svc.tracer != nil {
-		if err := svc.tracer.Shutdown(ctx); err != nil {
-			errs = multierror.Append(errs, err)
-		}
-	}
+	// if svc.tracer != nil {
+	// 	if err := svc.tracer.Shutdown(ctx); err != nil {
+	// 		errs = multierror.Append(errs, err)
+	// 	}
+	// }
 
 	if svc.webserver != nil {
 		timeout, cancel := context.WithTimeout(ctx, shutdownTimeout)
