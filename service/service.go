@@ -92,6 +92,7 @@ func New(ctx context.Context, configPath, sentryDSN string, opts ...func(*option
 		Environment:        config.GetEnvironment().String(),
 		AttachStacktrace:   true,
 		EnableTracing:      true,
+		TracesSampler:      opt.traceSampler,
 		TracesSampleRate:   opt.traceSampleRate,
 		ProfilesSampleRate: opt.profileSameplRate,
 	}); err != nil {

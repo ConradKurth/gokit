@@ -1,11 +1,14 @@
 package service
 
+import "github.com/getsentry/sentry-go"
+
 type options struct {
 	temporalService   bool
 	httpService       bool
 	grpcService       bool
 	traceSampleRate   float64
 	profileSameplRate float64
+	traceSampler      sentry.TracesSampler
 }
 
 // WithGRPCService will enable to service to run with a temporal worker
@@ -38,5 +41,11 @@ func WithTraceSampleRate(r float64) func(*options) {
 func WithProfileSampleRate(r float64) func(*options) {
 	return func(o *options) {
 		o.profileSameplRate = r
+	}
+}
+
+func WithTraceSampler(t sentry.TracesSampler) func(o *options) {
+	return func(o *options) {
+		o.traceSampler = t
 	}
 }
