@@ -95,6 +95,10 @@ func InitDB(c *config.Config, opts ...func(*options)) *sqlx.DB {
 			u = fmt.Sprintf("%v?sslmode=%v", u, mode)
 		}
 
+		if d.url != "" {
+			u = d.url
+		}
+
 		config, err := pgx.ParseConfig(u)
 		if err != nil {
 			panic(err)

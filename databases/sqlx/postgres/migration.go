@@ -3,6 +3,7 @@ package postgres
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -10,9 +11,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-const (
-	baseMigrationDir = "file://migrations/"
-)
+const baseMigrationDir = "file://migrations/"
 
 func RunMigrations(db *sqlx.DB, opts *options) {
 	driver, err := postgres.WithInstance(db.DB, &postgres.Config{
@@ -27,8 +26,9 @@ func RunMigrations(db *sqlx.DB, opts *options) {
 		dir = opts.migrationDir
 	}
 
+	url := strings.TrimRight(fmt.Sprintf("%v/%v", dir, opts.name.String()), "/")
 	m, err := migrate.NewWithDatabaseInstance(
-		fmt.Sprintf("%v/%v", dir, opts.name.String()),
+		url,
 		"postgres", driver)
 	if err != nil {
 		panic(err)
