@@ -17,6 +17,8 @@ type Environment string
 const (
 	GoENV = "GO_ENV"
 
+	Local Environment = "local"
+
 	Development Environment = "development"
 
 	Feature Environment = "feature"
@@ -50,6 +52,11 @@ func GetEnvironment() Environment {
 		panic(err)
 	}
 	return goEnv
+}
+
+func IsLocal() bool {
+	e := GetEnvironment()
+	return e == Local
 }
 
 func IsDevelopment() bool {
