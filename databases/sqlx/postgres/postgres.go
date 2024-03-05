@@ -14,14 +14,36 @@ import (
 	"github.com/uptrace/opentelemetry-go-extra/otelsqlx"
 )
 
+type ConnectionURLFields struct {
+	User     string
+	Password string
+	Host     string
+	Port     int
+	DBName   string
+	Mode     string
+}
+
+type SSLCertFields struct {
+	SSLCA      string
+	ServerName string
+}
 type options struct {
 	name                config.Database
 	runMigration        bool
 	migrationsTableName string
 	migrationDir        string
+	migrationUseDBName  bool
 	driveName           string
 	url                 string
 	trace               pgx.QueryTracer
+	urlFields           *ConnectionURLFields
+	sslCertsField       *SSLCertFields
+}
+
+func WithMigrationUseDBName() func(*options) {
+	return func(o *options) {
+		o.migrationUseDBName = true
+	}
 }
 
 func WithMigrationDir(d string) func(*options) {
@@ -66,8 +88,20 @@ func WithTracer(t pgx.QueryTracer) func(*options) {
 	}
 }
 
+func WithConnectionURLField(f ConnectionURLFields) func(*options) {
+	return func(o *options) {
+		o.urlFields = &f
+	}
+}
+
+func WithSSLCertField(f SSLCertFields) func(*options) {
+	return func(o *options) {
+		o.sslCertsField = &f
+	}
+}
+
 // ONLY CALL THIS ONCE FOR EACH DB TYPE
-func InitDB(c *config.Config, opts ...func(*options)) *sqlx.DB {
+func InitDB(opts ...func(*options)) *sqlx.DB {
 	d := &options{
 		driveName: "pgx",
 	}
@@ -82,43 +116,47 @@ func InitDB(c *config.Config, opts ...func(*options)) *sqlx.DB {
 			url = d.url
 		}
 	case "pgx":
-		u := fmt.Sprintf("postgresql://%v:%v@%v:%v/%v",
-			c.GetString(fmt.Sprintf("%v.user", d.name)),
-			c.GetString(fmt.Sprintf("%v.password", d.name)),
-			c.GetString(fmt.Sprintf("%v.host", d.name)),
-			c.GetString(fmt.Sprintf("%v.port", d.name)),
-			c.GetString(fmt.Sprintf("%v.dbname", d.name)),
-		)
+		if d.urlFields != nil {
+			url = fmt.Sprintf("postgresql://%v:%v@%v:%v/%v",
+				d.urlFields.User,
+				d.urlFields.Password,
+				d.urlFields.Host,
+				d.urlFields.Port,
+				d.urlFields.DBName,
+			)
+			if d.urlFields.Mode != "" {
+				url = fmt.Sprintf("%v?sslmode=%v", url, d.urlFields.Mode)
+			}
 
-		mode := c.GetString(fmt.Sprintf("%v.sslmode", d.name))
-		if mode != "" {
-			u = fmt.Sprintf("%v?sslmode=%v", u, mode)
+		} else {
+			url = d.url
 		}
 
-		if d.url != "" {
-			u = d.url
+		if d.url == "" && d.urlFields == nil {
+			panic("No URL or URLFields provided")
 		}
-
-		config, err := pgx.ParseConfig(u)
+		config, err := pgx.ParseConfig(url)
 		if err != nil {
 			panic(err)
 		}
 		if d.trace != nil {
 			config.Tracer = d.trace
 		}
+
 		// THIS ASSUMES THE SSL Cert is in the right location
-		if mode == "verify-ca" {
+		if d.sslCertsField != nil {
 			roots := x509.NewCertPool()
-			sslCA := c.GetString(fmt.Sprintf("%v.certificate", d.name))
+			sslCA := d.sslCertsField.SSLCA
 			ok := roots.AppendCertsFromPEM([]byte(sslCA))
 			if !ok {
 				panic("failed to parse root certificate")
 			}
 			config.TLSConfig = &tls.Config{
-				ServerName: c.GetString(fmt.Sprintf("%v.serverName", d.name)),
+				ServerName: d.sslCertsField.ServerName,
 				RootCAs:    roots,
 			}
 		}
+
 		url = stdlib.RegisterConnConfig(config)
 	default:
 		log.Panicf("Unsupported driver: %v", d.driveName)

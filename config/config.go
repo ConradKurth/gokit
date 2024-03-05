@@ -34,7 +34,7 @@ func (e Environment) String() string {
 
 func (e Environment) validate() error {
 	switch e {
-	case Development, Feature, Staging, Production:
+	case Development, Feature, Staging, Production, Local:
 		return nil
 	default:
 		return fmt.Errorf("Unsupported env: '%v'", e)
@@ -45,7 +45,7 @@ func GetEnvironment() Environment {
 
 	goEnv := Environment(os.Getenv(GoENV))
 	if goEnv == "" {
-		goEnv = Development
+		goEnv = Local
 	}
 
 	if err := goEnv.validate(); err != nil {

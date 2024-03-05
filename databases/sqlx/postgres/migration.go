@@ -26,9 +26,11 @@ func RunMigrations(db *sqlx.DB, opts *options) {
 		dir = opts.migrationDir
 	}
 
-	url := strings.TrimRight(fmt.Sprintf("%v/%v", dir, opts.name.String()), "/")
+	if opts.migrationUseDBName {
+		dir = strings.TrimRight(fmt.Sprintf("%v/%v", dir, opts.name.String()), "/")
+	}
 	m, err := migrate.NewWithDatabaseInstance(
-		url,
+		dir,
 		"postgres", driver)
 	if err != nil {
 		panic(err)
