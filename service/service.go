@@ -14,10 +14,8 @@ import (
 	"github.com/ConradKurth/gokit/config"
 	"github.com/ConradKurth/gokit/instrument"
 	"github.com/ConradKurth/gokit/logger"
-	loggerMiddleware "github.com/ConradKurth/gokit/middleware/logger"
 	sentryMiddleware "github.com/ConradKurth/gokit/middleware/sentry"
 	"github.com/ConradKurth/gokit/middleware/ssl"
-	"github.com/ConradKurth/gokit/middleware/userinfo"
 	"github.com/ConradKurth/gokit/secrets"
 	"github.com/andybalholm/brotli"
 	"github.com/getsentry/sentry-go"
@@ -184,9 +182,8 @@ func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 	router.Use(ssl.NewMiddleware(config.IsDevelopment()))
 
 	cors := cors.New(cors.Options{
-		AllowedOrigins: cfg.GetStringSlice("cors.hosts"),
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		// AllowedHeaders:   []string{"Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "sentry-trace", "X-CSRF-Token"},
+		AllowedOrigins:   cfg.GetStringSlice("cors.hosts"),
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
 		MaxAge:           300,
@@ -197,17 +194,12 @@ func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 	router.Use(otelchi.Middleware(svc.serviceName))
 	router.Use(middleware.RealIP)
 	router.Use(middleware.RequestID)
-	router.Use(userinfo.NewMiddleware())
-	router.Use(loggerMiddleware.NewMiddleware(svc.logger))
-
 	compression := middleware.NewCompressor(brotliCompressionLevel)
 	compression.SetEncoder("br", func(w io.Writer, level int) io.Writer {
 		return brotli.NewWriterLevel(w, level)
 	})
 	router.Use(compression.Handler)
-
 	router.Use(sentryMiddleware.NewMiddleware(cfg))
-
 	return router
 }
 
