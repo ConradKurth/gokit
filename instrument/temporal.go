@@ -4,14 +4,13 @@ import (
 	"context"
 
 	"github.com/ConradKurth/gokit/config"
-	"github.com/ConradKurth/gokit/logger"
 	"go.opentelemetry.io/otel"
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/contrib/opentelemetry"
 )
 
 // NewTemporalClient will create a new temporal client with interceptors added
-func NewTemporalClient(ctx context.Context, l logger.Logger, c *config.Config, serviceName string) (client.Client, error) {
+func NewTemporalClient(ctx context.Context, c *config.Config, serviceName string) (client.Client, error) {
 
 	_, err := GetTracingProvider(ctx, c, serviceName)
 	if err != nil {
@@ -25,7 +24,6 @@ func NewTemporalClient(ctx context.Context, l logger.Logger, c *config.Config, s
 
 	opts := client.Options{
 		HostPort: c.GetString("temporal.hostPort"),
-		Logger:   logger.NewLoggerAdapter(l),
 	}
 
 	opts.Interceptors = append(opts.Interceptors, tracingInterceptor)

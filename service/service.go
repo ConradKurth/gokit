@@ -22,7 +22,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/hashicorp/go-multierror"
 	"github.com/riandyrn/otelchi"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.temporal.io/sdk/client"
@@ -58,6 +57,7 @@ type CronRegister interface {
 
 type RouteRegistration interface {
 	RegisterRoutes(router chi.Router, middlewares ...func(http.Handler) http.Handler)
+	RegisterRoutesSimple(router chi.Router)
 	RegisterPublicRoutes(router chi.Router, middlewares ...func(http.Handler) http.Handler)
 }
 type WorkerRegistration interface {
@@ -104,7 +104,7 @@ func New(ctx context.Context, configPath, sentryDSN string, opts ...func(*option
 	// }
 
 	if opt.temporalService {
-		svc.temporalClient, err = instrument.NewTemporalClient(ctx, svc.logger, cfg, svc.serviceName)
+		svc.temporalClient, err = instrument.NewTemporalClient(ctx, cfg, svc.serviceName)
 		if err != nil {
 			return nil, fmt.Errorf("initializing temporal: %w", err)
 		}
@@ -203,9 +203,15 @@ func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 	return router
 }
 
+// RegisterRoutesSimple registers http routes with the webserver router.
+func (svc *Service) RegisterRoutesSimple(routers []RouteRegistration) {
+	for _, route := range routers {
+		route.RegisterRoutes(svc.router)
+	}
+}
+
 // RegisterRoutes registers http routes with the webserver router.
 func (svc *Service) RegisterRoutes(routers []RouteRegistration, middlewares ...func(http.Handler) http.Handler) {
-
 	for _, route := range routers {
 		route.RegisterRoutes(svc.router, middlewares...)
 	}
@@ -273,7 +279,7 @@ func (svc *Service) Start(ctx context.Context) error {
 // Shutdown closes all internal service connections and stops all servers.
 // It waits for all worker functions to finish.
 func (svc *Service) Shutdown(ctx context.Context) error {
-	var errs *multierror.Error
+	var allErrs error
 
 	if svc.temporalWorker != nil {
 		svc.temporalWorker.Stop()
@@ -284,7 +290,7 @@ func (svc *Service) Shutdown(ctx context.Context) error {
 
 	for _, conn := range grpcClients {
 		if err := conn.Close(); err != nil {
-			return err
+			allErrs = errors.Join(allErrs, err)
 		}
 	}
 
@@ -303,9 +309,9 @@ func (svc *Service) Shutdown(ctx context.Context) error {
 		defer cancel()
 
 		if err := svc.webserver.Shutdown(timeout); err != nil {
-			errs = multierror.Append(errs, err)
+			allErrs = errors.Join(allErrs, err)
 		}
 	}
 
-	return errs.ErrorOrNil()
+	return allErrs
 }
