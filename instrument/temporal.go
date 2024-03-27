@@ -23,7 +23,8 @@ func NewTemporalClient(ctx context.Context, c *config.Config, serviceName string
 	}
 
 	opts := client.Options{
-		HostPort: c.GetString("temporal.hostPort"),
+		HostPort:  c.GetString("temporal.hostPort"),
+		Namespace: c.GetString("temporal.namespace"),
 	}
 
 	opts.Interceptors = append(opts.Interceptors, tracingInterceptor)
