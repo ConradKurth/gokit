@@ -2,6 +2,8 @@ package instrument
 
 import (
 	"context"
+	"crypto/tls"
+	"fmt"
 
 	"github.com/ConradKurth/gokit/config"
 	"go.opentelemetry.io/otel"
@@ -25,6 +27,22 @@ func NewTemporalClient(ctx context.Context, c *config.Config, serviceName string
 	opts := client.Options{
 		HostPort:  c.GetString("temporal.hostPort"),
 		Namespace: c.GetString("temporal.namespace"),
+	}
+
+	if c.GetBool("temporal.tls.enabled") {
+		cert, err := tls.X509KeyPair(
+			[]byte(c.GetString("temporal.tls.ca")),
+			[]byte(c.GetString("temporal.tls.key")),
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed loading client cert and key: %w", err)
+		}
+
+		opts.ConnectionOptions = client.ConnectionOptions{
+			TLS: &tls.Config{
+				Certificates: []tls.Certificate{cert},
+			},
+		}
 	}
 
 	opts.Interceptors = append(opts.Interceptors, tracingInterceptor)
