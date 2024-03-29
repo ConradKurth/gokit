@@ -3,6 +3,8 @@ package instrument
 import (
 	"context"
 	"crypto/tls"
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
 
 	"github.com/ConradKurth/gokit/config"
@@ -28,19 +30,30 @@ func NewTemporalClient(ctx context.Context, c *config.Config, serviceName string
 		HostPort:  c.GetString("temporal.hostPort"),
 		Namespace: c.GetString("temporal.namespace"),
 	}
-
 	if c.GetBool("temporal.tls.enabled") {
-		cert, err := tls.X509KeyPair(
-			[]byte(c.GetString("temporal.tls.ca")),
-			[]byte(c.GetString("temporal.tls.key")),
-		)
+
+		pemBlock, _ := pem.Decode([]byte(c.GetString("temporal.tls.cert")))
+
+		parseCert, err := x509.ParseCertificate(pemBlock.Bytes)
 		if err != nil {
-			return nil, fmt.Errorf("failed loading client cert and key: %w", err)
+			return nil, fmt.Errorf("error parsing cert")
+		}
+
+		keyBlock, _ := pem.Decode([]byte(c.GetString("temporal.tls.key")))
+		key, err := x509.ParsePKCS1PrivateKey(keyBlock.Bytes)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing key")
+		}
+
+		tlsCert := tls.Certificate{
+			Certificate: [][]byte{parseCert.Raw},
+			PrivateKey:  key,
+			Leaf:        parseCert,
 		}
 
 		opts.ConnectionOptions = client.ConnectionOptions{
 			TLS: &tls.Config{
-				Certificates: []tls.Certificate{cert},
+				Certificates: []tls.Certificate{tlsCert},
 			},
 		}
 	}
@@ -49,7 +62,7 @@ func NewTemporalClient(ctx context.Context, c *config.Config, serviceName string
 
 	temporalClient, err := client.Dial(opts)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not dial the client: %w", err)
 	}
 
 	return temporalClient, nil
