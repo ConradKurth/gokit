@@ -3,13 +3,14 @@ package service
 import "github.com/getsentry/sentry-go"
 
 type options struct {
-	temporalService   bool
-	httpService       bool
-	grpcService       bool
-	traceSampleRate   float64
-	profileSameplRate float64
-	traceSampler      sentry.TracesSampler
-	beforeSend        func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event
+	temporalService       bool
+	httpService           bool
+	grpcService           bool
+	traceSampleRate       float64
+	profileSameplRate     float64
+	traceSampler          sentry.TracesSampler
+	beforeSendTransaction func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event
+	beforeSendEvent       func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event
 }
 
 // WithGRPCService will enable to service to run with a temporal worker
@@ -53,6 +54,12 @@ func WithTraceSampler(t sentry.TracesSampler) func(o *options) {
 
 func WithBeforeSendTransaction(t func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event) func(o *options) {
 	return func(o *options) {
-		o.beforeSend = t
+		o.beforeSendTransaction = t
+	}
+}
+
+func WithBeforeSendEvent(t func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event) func(o *options) {
+	return func(o *options) {
+		o.beforeSendEvent = t
 	}
 }

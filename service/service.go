@@ -84,20 +84,19 @@ func New(ctx context.Context, configPath, sentryDSN string, opts ...func(*option
 		logger:      logger.NewV2(cfg),
 	}
 
-	if !config.IsLocal() {
-		if err = sentry.Init(sentry.ClientOptions{
-			Dsn:                   sentryDSN,
-			ServerName:            svc.serviceName,
-			Environment:           config.GetEnvironment().String(),
-			AttachStacktrace:      true,
-			EnableTracing:         true,
-			TracesSampler:         opt.traceSampler,
-			TracesSampleRate:      opt.traceSampleRate,
-			ProfilesSampleRate:    opt.profileSameplRate,
-			BeforeSendTransaction: opt.beforeSend,
-		}); err != nil {
-			return nil, fmt.Errorf("initializing sentry: %w", err)
-		}
+	if err = sentry.Init(sentry.ClientOptions{
+		Dsn:                   sentryDSN,
+		ServerName:            svc.serviceName,
+		Environment:           config.GetEnvironment().String(),
+		AttachStacktrace:      true,
+		EnableTracing:         true,
+		TracesSampler:         opt.traceSampler,
+		TracesSampleRate:      opt.traceSampleRate,
+		ProfilesSampleRate:    opt.profileSameplRate,
+		BeforeSendTransaction: opt.beforeSendTransaction,
+		BeforeSend:            opt.beforeSendEvent,
+	}); err != nil {
+		return nil, fmt.Errorf("initializing sentry: %w", err)
 	}
 
 	// svc.tracer, err = instrument.GetTracingProvider(ctx, cfg, svc.serviceName)
