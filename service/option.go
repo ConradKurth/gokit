@@ -65,8 +65,8 @@ func WithBeforeSendEvent(t func(event *sentry.Event, hint *sentry.EventHint) *se
 	}
 }
 
-func WithSentryEnabled() func(o *options) {
+func WithSentry(enabled bool) func(o *options) {
 	return func(o *options) {
-		o.sentryEnabled = true
+		o.sentryEnabled = enabled
 	}
 }
