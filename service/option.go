@@ -8,6 +8,7 @@ type options struct {
 	grpcService           bool
 	traceSampleRate       float64
 	profileSameplRate     float64
+	sentryEnabled         bool
 	traceSampler          sentry.TracesSampler
 	beforeSendTransaction func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event
 	beforeSendEvent       func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event
@@ -61,5 +62,11 @@ func WithBeforeSendTransaction(t func(event *sentry.Event, hint *sentry.EventHin
 func WithBeforeSendEvent(t func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event) func(o *options) {
 	return func(o *options) {
 		o.beforeSendEvent = t
+	}
+}
+
+func WithSentryEnabled() func(o *options) {
+	return func(o *options) {
+		o.sentryEnabled = true
 	}
 }
