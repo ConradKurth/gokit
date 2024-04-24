@@ -57,7 +57,6 @@ type CronRegister interface {
 
 type RouteRegistration interface {
 	RegisterRoutes(router chi.Router, middlewares ...func(http.Handler) http.Handler)
-	RegisterRoutesSimple(router chi.Router)
 	RegisterPublicRoutes(router chi.Router, middlewares ...func(http.Handler) http.Handler)
 }
 type WorkerRegistration interface {
@@ -182,7 +181,7 @@ func (svc *Service) Router() chi.Router {
 func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 	router := chi.NewRouter()
 	router.Use(middleware.Heartbeat("/healthz"))
-	router.Use(ssl.NewMiddleware(config.IsDevelopment()))
+	router.Use(ssl.NewMiddleware(config.IsLocal()))
 
 	cors := cors.New(cors.Options{
 		AllowedOrigins:   cfg.GetStringSlice("cors.hosts"),
@@ -204,13 +203,6 @@ func (svc *Service) initializeRouter(cfg *config.Config) chi.Router {
 	router.Use(compression.Handler)
 	router.Use(sentryMiddleware.NewMiddleware(cfg))
 	return router
-}
-
-// RegisterRoutesSimple registers http routes with the webserver router.
-func (svc *Service) RegisterRoutesSimple(routers []RouteRegistration) {
-	for _, route := range routers {
-		route.RegisterRoutes(svc.router)
-	}
 }
 
 // RegisterRoutes registers http routes with the webserver router.
