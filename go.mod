@@ -3,7 +3,7 @@ module github.com/ConradKurth/gokit
 go 1.20
 
 require (
-	github.com/DATA-DOG/go-txdb v0.1.7
+	github.com/DATA-DOG/go-txdb v0.1.8
 	github.com/andybalholm/brotli v1.0.5
 	github.com/aws/aws-sdk-go v1.44.324
 	github.com/bradfitz/gomemcache v0.0.0-20230611145640-acc696258285
