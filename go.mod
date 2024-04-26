@@ -20,7 +20,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/riandyrn/otelchi v0.5.1
 	github.com/romanyx/polluter v1.2.2
-	github.com/shopspring/decimal v1.3.1
+	github.com/shopspring/decimal v1.4.0
 	github.com/speps/go-hashids/v2 v2.0.1
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.9.0
