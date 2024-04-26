@@ -24,7 +24,7 @@ require (
 	github.com/speps/go-hashids/v2 v2.0.1
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.9.0
-	github.com/uptrace/opentelemetry-go-extra/otelsqlx v0.2.2
+	github.com/uptrace/opentelemetry-go-extra/otelsqlx v0.2.4
 	github.com/uptrace/opentelemetry-go-extra/otelzap v0.2.2
 	go.opentelemetry.io/contrib/instrumentation/github.com/bradfitz/gomemcache/memcache/otelmemcache v0.42.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.42.0
@@ -86,7 +86,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
-	github.com/uptrace/opentelemetry-go-extra/otelsql v0.2.2 // indirect
+	github.com/uptrace/opentelemetry-go-extra/otelsql v0.2.4 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelutil v0.2.2 // indirect
 	go.opentelemetry.io/contrib v1.17.0 // indirect
 	go.opentelemetry.io/otel/metric v1.24.0 // indirect
