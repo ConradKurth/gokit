@@ -3,6 +3,7 @@ package responses
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/ConradKurth/gokit/logger"
@@ -90,6 +91,11 @@ func ErrHandler(h func(w http.ResponseWriter, req *http.Request) error) http.Han
 	return func(w http.ResponseWriter, req *http.Request) {
 		err := h(w, req)
 		if err == nil {
+			return
+		}
+
+		if errors.Is(err, context.Canceled) {
+			w.WriteHeader(499) // client terminated error code
 			return
 		}
 
