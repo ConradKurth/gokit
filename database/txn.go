@@ -22,14 +22,23 @@ func getTxnFromContext(ctx context.Context) *sqlx.Tx {
 // Transact wraps sql operations in a transaction.
 func Transact(ctx context.Context, db *sqlx.DB, txFunc func(context.Context, *sqlx.Tx) error) error {
 
+	_, err := TransactType(ctx, db, func(txnCtx context.Context, tx *sqlx.Tx) (struct{}, error) {
+		return struct{}{}, txFunc(txnCtx, tx)
+	})
+	return err
+}
+
+func TransactType[T any](ctx context.Context, db *sqlx.DB, txFunc func(context.Context, *sqlx.Tx) (T, error)) (T, error) {
+	var v T
 	tx := getTxnFromContext(ctx)
 	isRoot := false
 	var err error
 	if tx == nil {
+
 		isRoot = true
 		tx, err = db.Beginx()
 		if err != nil {
-			return err
+			return v, err
 		}
 		ctx = setTxnContext(ctx, tx)
 	}
@@ -51,6 +60,6 @@ func Transact(ctx context.Context, db *sqlx.DB, txFunc func(context.Context, *sq
 		}
 	}()
 
-	err = txFunc(ctx, tx)
-	return err
+	v, err = txFunc(ctx, tx)
+	return v, err
 }
