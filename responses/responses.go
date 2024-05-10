@@ -74,7 +74,7 @@ func responseHandler(ctx context.Context, w http.ResponseWriter, data interface{
 	w.WriteHeader(code)
 	if _, err := w.Write(b); err != nil {
 		l := logger.GetLogger(ctx)
-		l.ErrorCtx(ctx, "Error writing response response", logger.ErrField(err))
+		l.ErrorCtx(ctx, "Error writing response", logger.ErrField(err))
 		return
 	}
 
