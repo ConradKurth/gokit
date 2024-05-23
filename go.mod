@@ -3,7 +3,7 @@ module github.com/ConradKurth/gokit
 go 1.20
 
 require (
-	github.com/DATA-DOG/go-txdb v0.1.7
+	github.com/DATA-DOG/go-txdb v0.1.9
 	github.com/andybalholm/brotli v1.0.5
 	github.com/aws/aws-sdk-go v1.44.324
 	github.com/bradfitz/gomemcache v0.0.0-20230611145640-acc696258285
@@ -54,7 +54,7 @@ require (
 	github.com/gogo/status v1.1.1 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.3.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
@@ -74,7 +74,6 @@ require (
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
-	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -93,7 +92,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	go.temporal.io/api v1.23.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	go.uber.org/goleak v1.2.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/net v0.23.0 // indirect
