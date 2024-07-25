@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/DATA-DOG/go-txdb v0.1.7
 	github.com/andybalholm/brotli v1.0.5
-	github.com/aws/aws-sdk-go v1.44.324
+	github.com/aws/aws-sdk-go v1.55.2
 	github.com/bradfitz/gomemcache v0.0.0-20230611145640-acc696258285
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/getsentry/sentry-go v0.27.0
