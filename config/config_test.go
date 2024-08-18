@@ -58,8 +58,8 @@ func Test_GetEnvironment(t *testing.T) {
 			Expected: Production,
 		},
 		{
-			Name:     "Default to dev environment when none is set",
-			Expected: Development,
+			Name:     "Default to local environment when none is set",
+			Expected: Local,
 		},
 		{
 			Name:  "Panic when bad env is set",
