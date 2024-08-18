@@ -54,6 +54,6 @@ func (log *LoggerAdapter) Error(msg string, keyvals ...interface{}) {
 }
 
 func (log *LoggerAdapter) With(keyvals ...interface{}) log.Logger {
-	newLogger := otelzap.New(log.zl.With(log.fields(keyvals)...), otelzap.WithTraceIDField(true), otelzap.WithStackTrace(true))
+	newLogger := otelzap.New(log.zl.With(log.fields(keyvals)...), otelzap.WithStackTrace(true))
 	return &LoggerAdapter{zl: newLogger}
 }

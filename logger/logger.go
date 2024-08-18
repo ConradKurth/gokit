@@ -199,7 +199,7 @@ func NewV2(c *config.Config) Logger {
 	}
 
 	log := &logger{
-		logger: otelzap.New(l, otelzap.WithTraceIDField(true), otelzap.WithStackTrace(true)),
+		logger: otelzap.New(l, otelzap.WithStackTrace(true)),
 	}
 
 	// defer log.Close()
@@ -222,7 +222,7 @@ func New() Logger {
 	}
 
 	return &logger{
-		logger: otelzap.New(l, otelzap.WithTraceIDField(true), otelzap.WithStackTrace(true)),
+		logger: otelzap.New(l, otelzap.WithStackTrace(true)),
 	}
 }
 
