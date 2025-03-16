@@ -92,7 +92,6 @@ func New(ctx context.Context, configPath, sentryDSN string, opts ...func(*option
 			EnableTracing:         true,
 			TracesSampler:         opt.traceSampler,
 			TracesSampleRate:      opt.traceSampleRate,
-			ProfilesSampleRate:    opt.profileSameplRate,
 			BeforeSendTransaction: opt.beforeSendTransaction,
 			BeforeSend:            opt.beforeSendEvent,
 		}); err != nil {

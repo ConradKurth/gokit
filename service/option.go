@@ -7,7 +7,6 @@ type options struct {
 	httpService           bool
 	grpcService           bool
 	traceSampleRate       float64
-	profileSameplRate     float64
 	sentryEnabled         bool
 	traceSampler          sentry.TracesSampler
 	beforeSendTransaction func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event
@@ -38,12 +37,6 @@ func WithHTTPService() func(*options) {
 func WithTraceSampleRate(r float64) func(*options) {
 	return func(o *options) {
 		o.traceSampleRate = r
-	}
-}
-
-func WithProfileSampleRate(r float64) func(*options) {
-	return func(o *options) {
-		o.profileSameplRate = r
 	}
 }
 

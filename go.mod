@@ -1,6 +1,6 @@
 module github.com/ConradKurth/gokit
 
-go 1.23
+go 1.24.0
 
 require (
 	github.com/DATA-DOG/go-txdb v0.2.0
@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go v1.55.5
 	github.com/bradfitz/gomemcache v0.0.0-20230905024940-24af94b03874
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/getsentry/sentry-go v0.28.1
+	github.com/getsentry/sentry-go v0.31.1
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
@@ -24,6 +24,7 @@ require (
 	github.com/speps/go-hashids/v2 v2.0.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
+	github.com/uptrace/opentelemetry-go-extra/otelsql v0.3.1
 	github.com/uptrace/opentelemetry-go-extra/otelsqlx v0.3.1
 	github.com/uptrace/opentelemetry-go-extra/otelzap v0.3.1
 	go.opentelemetry.io/contrib/instrumentation/github.com/bradfitz/gomemcache/memcache/otelmemcache v0.43.0
@@ -33,8 +34,8 @@ require (
 	go.temporal.io/sdk v1.28.1
 	go.temporal.io/sdk/contrib/opentelemetry v0.6.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/sync v0.8.0
-	golang.org/x/text v0.17.0
+	golang.org/x/sync v0.12.0
+	golang.org/x/text v0.23.0
 	google.golang.org/grpc v1.65.0
 )
 
@@ -72,6 +73,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/nexus-rpc/sdk-go v0.0.9 // indirect
+	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
@@ -85,7 +87,6 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
-	github.com/uptrace/opentelemetry-go-extra/otelsql v0.3.1 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelutil v0.3.1 // indirect
 	go.opentelemetry.io/otel/log v0.3.0 // indirect
 	go.opentelemetry.io/otel/metric v1.28.0 // indirect
@@ -96,7 +97,7 @@ require (
 	golang.org/x/crypto v0.25.0 // indirect
 	golang.org/x/exp v0.0.0-20231127185646-65229373498e // indirect
 	golang.org/x/net v0.27.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240711142825-46eb208f015d // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240711142825-46eb208f015d // indirect
